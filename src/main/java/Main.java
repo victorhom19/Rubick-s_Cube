@@ -352,7 +352,6 @@ class Cube {
                     Bottom.set(i, buffer.get(j));
                 }
 
-
                 //По часовой
                 if (turnNumber == 0) {
                     ArrayList<String> bufferSide = new ArrayList<>();
