@@ -1,3 +1,4 @@
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,26 +27,23 @@ public class Main {
                     String requestedSide = keyboard.next();
                     cube1.sideStatus(requestedSide);
                     break;
+
                 case "Rotate":
                     System.out.println("Enter rotation sequence:");
                     String[] rotationSequence = keyboard.next().split(",");
 
-                    for (int i = 0; i < rotationSequence.length; i ++) {
-                        String rotation = rotationSequence[i];
-
-                        System.out.print(rotationSequence.length);
-
+                    for (String rotation : rotationSequence) {
                         Pattern rowNumberPattern = Pattern.compile("\\d+");
                         Matcher rowNumberMatcher = rowNumberPattern.matcher(rotation);
                         Integer rowNumber = 0;
-                        while(rowNumberMatcher.find()) {
+                        while (rowNumberMatcher.find()) {
                             rowNumber = Integer.valueOf(rowNumberMatcher.group());
                         }
 
                         Pattern turnDirectionPattern = Pattern.compile("\\D+");
                         Matcher turnDirectionMatcher = turnDirectionPattern.matcher(rotation);
                         String turnDirection = "";
-                        while(turnDirectionMatcher.find()) {
+                        while (turnDirectionMatcher.find()) {
                             turnDirection = turnDirectionMatcher.group();
                         }
 
@@ -53,6 +51,7 @@ public class Main {
                         cube1.rotateCube(turnDirection);
                     }
                     break;
+
                 case "changeOutputMode":
                     System.out.print("Changed from " + cube1.Output_Mode);
                     if (cube1.Output_Mode.equals("Letters")) cube1.Output_Mode = "Colors";
@@ -218,65 +217,96 @@ class Cube {
             Right.add("O");
         }
 
-        /*Front.add("1FR");
-        Front.add("2FR");
-        Front.add("3FR");
-        Front.add("4FR");
-        Front.add("5FR");
-        Front.add("6FR");
-        Front.add("7FR");
-        Front.add("8FR");
-        Front.add("9FR");
+    }
 
-        Back.add("1BA");
-        Back.add("2BA");
-        Back.add("3BA");
-        Back.add("4BA");
-        Back.add("5BA");
-        Back.add("6BA");
-        Back.add("7BA");
-        Back.add("8BA");
-        Back.add("9BA");
+    private void flipSide(String side, String rotationDirection) {
+        ArrayList<String> sideToFlip = new ArrayList<>(Collections.singletonList(""));
+        ArrayList<String> bufferSide;
+        switch (side) {
+            case "Front":
+                sideToFlip = Front;
+                break;
+            case "Back":
+                sideToFlip = Back;
+                break;
+            case "Top":
+                sideToFlip = Top;
+                break;
+            case "Bottom":
+                sideToFlip = Bottom;
+                break;
+            case "Left":
+                sideToFlip = Left;
+                break;
+            case "Right":
+                sideToFlip = Right;
+                break;
+        }
+        switch (rotationDirection) {
+            case "clockwise":
 
-        Top.add("1TO");
-        Top.add("2TO");
-        Top.add("3TO");
-        Top.add("4TO");
-        Top.add("5TO");
-        Top.add("6TO");
-        Top.add("7TO");
-        Top.add("8TO");
-        Top.add("9TO");
+                bufferSide = new ArrayList<>();
+                for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
+                for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
+                    int index_from = i * cubeSize + j;
+                    int index_to = j * cubeSize + cubeSize - i - 1;
+                    bufferSide.set(index_to, sideToFlip.get(index_from));
+                }
 
-        Bottom.add("1BO");
-        Bottom.add("2BO");
-        Bottom.add("3BO");
-        Bottom.add("4BO");
-        Bottom.add("5BO");
-        Bottom.add("6BO");
-        Bottom.add("7BO");
-        Bottom.add("8BO");
-        Bottom.add("9BO");
+                switch (side) {
+                    case "Front":
+                        Front = bufferSide;
+                        break;
+                    case "Back":
+                        Back = bufferSide;
+                        break;
+                    case "Top":
+                        Top = bufferSide;
+                        break;
+                    case "Bottom":
+                        Bottom = bufferSide;
+                        break;
+                    case "Left":
+                        Left = bufferSide;
+                        break;
+                    case "Right":
+                        Right = bufferSide;
+                        break;
+                }
 
-        Left.add("1LE");
-        Left.add("2LE");
-        Left.add("3LE");
-        Left.add("4LE");
-        Left.add("5LE");
-        Left.add("6LE");
-        Left.add("7LE");
-        Left.add("8LE");
-        Left.add("9LE");
+                break;
+            case "counter-clockwise":
 
-        Right.add("1RI");
-        Right.add("2RI");
-        Right.add("3RI");
-        Right.add("4RI");
-        Right.add("5RI");
-        Right.add("6RI");
-        Right.add("7RI");
-        Right.add("8RI");
-        Right.add("9RI");*/
+                bufferSide = new ArrayList<>();
+                for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
+                for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
+                    int index_from = i * cubeSize + j;
+                    int index_to = cubeSize * (cubeSize - j - 1) + i;
+                    bufferSide.set(index_to, sideToFlip.get(index_from));
+                }
+
+                switch (side) {
+                    case "Front":
+                        Front = bufferSide;
+                        break;
+                    case "Back":
+                        Back = bufferSide;
+                        break;
+                    case "Top":
+                        Top = bufferSide;
+                        break;
+                    case "Bottom":
+                        Bottom = bufferSide;
+                        break;
+                    case "Left":
+                        Left = bufferSide;
+                        break;
+                    case "Right":
+                        Right = bufferSide;
+                        break;
+                }
+                break;
+        }
 
     }
 
@@ -308,30 +338,8 @@ class Cube {
                     Top.set(i, buffer.get(j));
                 }
 
-
-                //По часовой
-                if (turnNumber == cubeSize - 1) {
-                    ArrayList<String> bufferSide = new ArrayList<>();
-                    for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-                    for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                        int index_from = i * cubeSize + j;
-                        int index_to = j * cubeSize + cubeSize - i - 1;
-                        bufferSide.set(index_to, Right.get(index_from));
-                    }
-                    Right = bufferSide;
-                }
-
-                //Против часовой
-                if (turnNumber == 0) {
-                    ArrayList<String> bufferSide = new ArrayList<>();
-                    for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-                    for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                        int index_from = i * cubeSize + j;
-                        int index_to = cubeSize * (cubeSize - j - 1) + i;
-                        bufferSide.set(index_to, Left.get(index_from));
-                    }
-                    Left = bufferSide;
-                }
+                if (turnNumber == 0) this.flipSide("Left", "counter-clockwise");
+                if (turnNumber == cubeSize - 1) this.flipSide("Right", "clockwise");
 
             }
 
@@ -352,29 +360,8 @@ class Cube {
                     Bottom.set(i, buffer.get(j));
                 }
 
-                //По часовой
-                if (turnNumber == 0) {
-                    ArrayList<String> bufferSide = new ArrayList<>();
-                    for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-                    for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                        int index_from = i * cubeSize + j;
-                        int index_to = j * cubeSize + cubeSize - i - 1;
-                        bufferSide.set(index_to, Left.get(index_from));
-                    }
-                    Left = bufferSide;
-                }
-
-                //Против часовой
-                if (turnNumber == cubeSize - 1) {
-                    ArrayList<String> bufferSide = new ArrayList<>();
-                    for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-                    for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                        int index_from = i * cubeSize + j;
-                        int index_to = cubeSize * (cubeSize - j - 1) + i;
-                        bufferSide.set(index_to, Right.get(index_from));
-                    }
-                    Right = bufferSide;
-                }
+                if (turnNumber == 0) this.flipSide("Left", "clockwise");
+                if (turnNumber == cubeSize - 1) this.flipSide("Right", "counter-clockwise");
             }
 
         }
@@ -403,29 +390,8 @@ class Cube {
                 }
 
 
-                //По часовой
-                if (turnNumber == 0) {
-                    ArrayList<String> bufferSide = new ArrayList<>();
-                    for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-                    for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                        int index_from = i * cubeSize + j;
-                        int index_to = j * cubeSize + cubeSize - i - 1;
-                        bufferSide.set(index_to, Top.get(index_from));
-                    }
-                    Top = bufferSide;
-                }
-
-                //Против часовой
-                if (turnNumber == cubeSize - 1) {
-                    ArrayList<String> bufferSide = new ArrayList<>();
-                    for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-                    for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                        int index_from = i * cubeSize + j;
-                        int index_to = cubeSize * (cubeSize - j - 1) + i;
-                        bufferSide.set(index_to, Bottom.get(index_from));
-                    }
-                    Bottom = bufferSide;
-                }
+                if (turnNumber == 0) this.flipSide("Top", "clockwise");
+                if (turnNumber == cubeSize - 1) this.flipSide("Bottom", "counter-clockwise");
 
             }
 
@@ -445,29 +411,8 @@ class Cube {
                 }
 
 
-                //По часовой
-                if (turnNumber == cubeSize - 1) {
-                    ArrayList<String> bufferSide = new ArrayList<>();
-                    for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-                    for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                        int index_from = i * cubeSize + j;
-                        int index_to = j * cubeSize + cubeSize - i - 1;
-                        bufferSide.set(index_to, Bottom.get(index_from));
-                    }
-                    Bottom = bufferSide;
-                }
-
-                //Против часовой
-                if (turnNumber == 0) {
-                    ArrayList<String> bufferSide = new ArrayList<>();
-                    for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-                    for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                        int index_from = i * cubeSize + j;
-                        int index_to = cubeSize * (cubeSize - j - 1) + i;
-                        bufferSide.set(index_to, Top.get(index_from));
-                    }
-                    Top = bufferSide;
-                }
+                if (turnNumber == 0) this.flipSide("Top", "counter-clockwise");
+                if (turnNumber == cubeSize - 1) this.flipSide("Bottom", "clockwise");
             }
 
         }
@@ -494,18 +439,7 @@ class Cube {
                     Right.set(i, buffer.get(j));
                 }
 
-
-                //По часовой
-                ArrayList<String> bufferSide = new ArrayList<>();
-                for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-                for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                    int index_from = i * cubeSize + j;
-                    int index_to = j * cubeSize + cubeSize - i - 1;
-                    bufferSide.set(index_to, Front.get(index_from));
-                }
-                Front = bufferSide;
-
-
+                this.flipSide("Front", "clockwise");
             }
 
             if (turnDirection.equals("CCW")) {
@@ -523,16 +457,7 @@ class Cube {
                     Left.set(i, buffer.get(j));
                 }
 
-
-                //Против часовой
-                ArrayList<String> bufferSide = new ArrayList<>();
-                for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-                for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                    int index_from = i * cubeSize + j;
-                    int index_to = cubeSize * (cubeSize - j - 1) + i;
-                    bufferSide.set(index_to, Front.get(index_from));
-                }
-                Front = bufferSide;
+                this.flipSide("Front", "counter-clockwise");
 
             }
 
@@ -553,25 +478,8 @@ class Cube {
             }
             Bottom = bufferSide;
 
-            //Против часовой
-            bufferSide = new ArrayList<>();
-            for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-            for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                int index_from = i * cubeSize + j;
-                int index_to = cubeSize * (cubeSize - j - 1) + i;
-                bufferSide.set(index_to, Right.get(index_from));
-            }
-            Right = bufferSide;
-
-            //По часовой
-            bufferSide = new ArrayList<>();
-            for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-            for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                int index_from = i * cubeSize + j;
-                int index_to = j * cubeSize + cubeSize - i - 1;
-                bufferSide.set(index_to, Left.get(index_from));
-            }
-            Left = bufferSide;
+            this.flipSide("Left", "clockwise");
+            this.flipSide("Right", "counter-clockwise");
 
         } else if (turnDirection.equals("Up")) {
 
@@ -585,25 +493,8 @@ class Cube {
             }
             Top = bufferSide;
 
-            //Против часовой
-            bufferSide = new ArrayList<>();
-            for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-            for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                int index_from = i * cubeSize + j;
-                int index_to = cubeSize * (cubeSize - j - 1) + i;
-                bufferSide.set(index_to, Left.get(index_from));
-            }
-            Left = bufferSide;
-
-            //По часовой
-            bufferSide = new ArrayList<>();
-            for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-            for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                int index_from = i * cubeSize + j;
-                int index_to = j * cubeSize + cubeSize - i - 1;
-                bufferSide.set(index_to, Right.get(index_from));
-            }
-            Right = bufferSide;
+            this.flipSide("Left", "counter-clockwise");
+            this.flipSide("Right", "clockwise");
 
         } else if (turnDirection.equals("Left")) {
             ArrayList<String> bufferSide = Front;
@@ -612,25 +503,8 @@ class Cube {
             Back = (ArrayList<String>) Left.clone();
             Left = bufferSide;
 
-            //Против часовой
-            bufferSide = new ArrayList<>();
-            for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-            for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                int index_from = i * cubeSize + j;
-                int index_to = cubeSize * (cubeSize - j - 1) + i;
-                bufferSide.set(index_to, Bottom.get(index_from));
-            }
-            Bottom = bufferSide;
-
-            //По часовой
-            bufferSide = new ArrayList<>();
-            for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-            for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                int index_from = i * cubeSize + j;
-                int index_to = j * cubeSize + cubeSize - i - 1;
-                bufferSide.set(index_to, Top.get(index_from));
-            }
-            Top = bufferSide;
+            this.flipSide("Bottom", "counter-clockwise");
+            this.flipSide("Top", "clockwise");
 
         } else if (turnDirection.equals("Right")) {
             ArrayList<String> bufferSide = Front;
@@ -639,25 +513,8 @@ class Cube {
             Back = (ArrayList<String>) Right.clone();
             Right = bufferSide;
 
-            //Против часовой
-            bufferSide = new ArrayList<>();
-            for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-            for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                int index_from = i * cubeSize + j;
-                int index_to = cubeSize * (cubeSize - j - 1) + i;
-                bufferSide.set(index_to, Top.get(index_from));
-            }
-            Top = bufferSide;
-
-            //По часовой
-            bufferSide = new ArrayList<>();
-            for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
-            for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
-                int index_from = i * cubeSize + j;
-                int index_to = j * cubeSize + cubeSize - i - 1;
-                bufferSide.set(index_to, Bottom.get(index_from));
-            }
-            Bottom = bufferSide;
+            this.flipSide("Top", "counter-clockwise");
+            this.flipSide("Bottom", "clockwise");
 
         }
 
