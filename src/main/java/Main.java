@@ -12,8 +12,8 @@ public class Main {
                 "You can also turn whole cube by entering direction of turning: Up, Down, Right, Left.\n" +
                 "To see current state of cube sides enter \"Status\" and choose specific side: \"Front\", \"Back\", \"Top\", \"Bottom\", \"Left\", \"Right\" or whole cube: \"All\"\n\n");
         Scanner keyboard = new Scanner(System.in);
-        Cube cube1 = new Cube();
-        cube1.initializeCube();
+        Cube cubeExample = new Cube();
+        cubeExample.initializeCube();
         String command = "";
 
         while (!command.equals("Stop")) {
@@ -25,39 +25,27 @@ public class Main {
                 case "Status":
                     System.out.println("Enter a side of cube: ");
                     String requestedSide = keyboard.next();
-                    cube1.sideStatus(requestedSide);
+                    cubeExample.sideStatus(requestedSide);
                     break;
 
                 case "Rotate":
                     System.out.println("Enter rotation sequence:");
-                    String[] rotationSequence = keyboard.next().split(",");
-
-                    for (String rotation : rotationSequence) {
-                        Pattern rowNumberPattern = Pattern.compile("\\d+");
-                        Matcher rowNumberMatcher = rowNumberPattern.matcher(rotation);
-                        Integer rowNumber = 0;
-                        while (rowNumberMatcher.find()) {
-                            rowNumber = Integer.valueOf(rowNumberMatcher.group());
-                        }
-
-                        Pattern turnDirectionPattern = Pattern.compile("\\D+");
-                        Matcher turnDirectionMatcher = turnDirectionPattern.matcher(rotation);
-                        String turnDirection = "";
-                        while (turnDirectionMatcher.find()) {
-                            turnDirection = turnDirectionMatcher.group();
-                        }
-
-                        cube1.rotateSide(turnDirection, rowNumber);
-                        cube1.rotateCube(turnDirection);
+                    ArrayList<String> rotationSequence = new ArrayList<>();
+                    for (String action: keyboard.next().split(",")) {
+                        rotationSequence.add(action);
                     }
+                    cubeExample.interactWithCube(rotationSequence);
+
                     break;
 
                 case "changeOutputMode":
-                    System.out.print("Changed from " + cube1.Output_Mode);
-                    if (cube1.Output_Mode.equals("Letters")) cube1.Output_Mode = "Colors";
-                    else if (cube1.Output_Mode.equals("Colors")) cube1.Output_Mode = "Letters";
-                    System.out.print(" to " + cube1.Output_Mode + "\n");
+                    System.out.print("Changed from " + cubeExample.Output_Mode);
+                    if (cubeExample.Output_Mode.equals("Letters")) cubeExample.Output_Mode = "Colors";
+                    else if (cubeExample.Output_Mode.equals("Colors")) cubeExample.Output_Mode = "Letters";
+                    System.out.print(" to " + cubeExample.Output_Mode + "\n");
                     break;
+                case "Shuffle":
+                    cubeExample.shuffleCube();
             }
         }
     }
@@ -518,6 +506,72 @@ class Cube {
 
         }
 
+    }
+
+    void interactWithCube (ArrayList<String> rotationSequence) {
+        for (String rotation : rotationSequence) {
+            Pattern rowNumberPattern = Pattern.compile("\\d+");
+            Matcher rowNumberMatcher = rowNumberPattern.matcher(rotation);
+            Integer rowNumber = 0;
+            while (rowNumberMatcher.find()) {
+                rowNumber = Integer.valueOf(rowNumberMatcher.group());
+            }
+
+            Pattern turnDirectionPattern = Pattern.compile("\\D+");
+            Matcher turnDirectionMatcher = turnDirectionPattern.matcher(rotation);
+            String turnDirection = "";
+            while (turnDirectionMatcher.find()) {
+                turnDirection = turnDirectionMatcher.group();
+            }
+
+            this.rotateSide(turnDirection, rowNumber);
+            this.rotateCube(turnDirection);
+        }
+    }
+
+    void shuffleCube() {
+        int numberOfActions = cubeSize * 10 + (int) (Math.random() * (cubeSize) + 5);
+        String generatedAction = "";
+        ArrayList<String> actionSequence = new ArrayList<>();
+        for (int i = 0; i < numberOfActions; i++) {
+            generatedAction = "";
+            switch ((int) (Math.random() * 10)) {
+                case 0:
+                    generatedAction += "U";
+                    break;
+                case 1:
+                    generatedAction += "D";
+                    break;
+                case 2:
+                    generatedAction += "L";
+                    break;
+                case 3:
+                    generatedAction += "R";
+                    break;
+                case 4:
+                    generatedAction += "CW";
+                    break;
+                case 5:
+                    generatedAction += "CCW";
+                    break;
+                case 6:
+                    generatedAction += "Up";
+                    break;
+                case 7:
+                    generatedAction += "Down";
+                    break;
+                case 8:
+                    generatedAction += "Left";
+                    break;
+                case 9:
+                    generatedAction += "Right";
+                    break;
+            }
+            generatedAction += (int) (Math.random() * (cubeSize));
+            actionSequence.add(generatedAction);
+        }
+        System.out.println(actionSequence);
+        this.interactWithCube(actionSequence);
     }
 }
 
