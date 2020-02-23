@@ -30,10 +30,8 @@ public class Main {
 
                 case "Rotate":
                     System.out.println("Enter rotation sequence:");
-                    ArrayList<String> rotationSequence = new ArrayList<>();
-                    for (String action: keyboard.next().split(",")) {
-                        rotationSequence.add(action);
-                    }
+                    ArrayList<String> rotationSequence =
+                            new ArrayList<>(Arrays.asList(keyboard.next().split(",")));
                     cubeExample.interactWithCube(rotationSequence);
 
                     break;
@@ -51,7 +49,7 @@ public class Main {
     }
 }
 
-class Cube {
+final class Cube {
 
     private int cubeSize;
 
@@ -299,7 +297,7 @@ class Cube {
     }
 
 
-    void rotateSide(String turnDirection, Integer turnNumber) {
+    private void rotateSide(String turnDirection, Integer turnNumber) {
 
 
         if (turnDirection.equals("U") || turnDirection.equals("D")) {
@@ -453,7 +451,7 @@ class Cube {
     }
 
 
-    void rotateCube(String turnDirection) {
+    private void rotateCube(String turnDirection) {
 
         if (turnDirection.equals("Down")) {
             ArrayList<String> bufferSide = Front;
@@ -531,7 +529,7 @@ class Cube {
 
     void shuffleCube() {
         int numberOfActions = cubeSize * 10 + (int) (Math.random() * (cubeSize) + 5);
-        String generatedAction = "";
+        String generatedAction;
         ArrayList<String> actionSequence = new ArrayList<>();
         for (int i = 0; i < numberOfActions; i++) {
             generatedAction = "";
