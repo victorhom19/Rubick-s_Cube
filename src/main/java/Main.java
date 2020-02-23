@@ -42,6 +42,7 @@ public class Main {
                     else if (cubeExample.Output_Mode.equals("Colors")) cubeExample.Output_Mode = "Letters";
                     System.out.print(" to " + cubeExample.Output_Mode + "\n");
                     break;
+
                 case "Shuffle":
                     cubeExample.shuffleCube();
             }
@@ -99,6 +100,7 @@ final class Cube {
         }
 
         if (Output_Mode.equals("Letters")) {
+
             String ANSI_RESET = "\u001B[0m";
             String ANSI_RED = "\u001B[38;5;196m";
             String ANSI_GREEN = "\u001B[38;5;40m";
@@ -106,6 +108,7 @@ final class Cube {
             String ANSI_BLUE = "\u001B[38;5;27m";
             String ANSI_ORANGE = "\u001B[38;5;202m";
             String ANSI_WHITE = "\u001B[38;5;255m";
+
             if (!(sideToPrint.isEmpty())) {
                 System.out.print(requestedSide + ":\n");
                 for (int i = 0; i < cubeSize * cubeSize; i++) {
@@ -130,13 +133,16 @@ final class Cube {
                             color = ANSI_ORANGE;
                             break;
                     }
+
                     System.out.print(color + sideToPrint.get(i) + " ");
                     if (i % cubeSize == cubeSize - 1) System.out.print(ANSI_RESET + "\n");
+
                 }
                 System.out.print("\n");
             }
 
         } else if (Output_Mode.equals("Colors")) {
+
             String ANSI_RESET = "\u001B[0m";
             String ANSI_RED = "\u001B[48;5;196m";
             String ANSI_GREEN = "\u001B[48;5;40m";
@@ -144,6 +150,7 @@ final class Cube {
             String ANSI_BLUE = "\u001B[48;5;27m";
             String ANSI_ORANGE = "\u001B[48;5;202m";
             String ANSI_WHITE = "\u001B[48;5;255m";
+
             if (!(sideToPrint.isEmpty())) {
                 System.out.print(requestedSide + ":\n");
                 for (int i = 0; i < cubeSize * cubeSize; i++) {
@@ -168,8 +175,10 @@ final class Cube {
                             color = ANSI_ORANGE;
                             break;
                     }
+
                     System.out.print(color + "   ");
                     if (i % cubeSize == cubeSize - 1) System.out.print(ANSI_RESET + "\n");
+
                 }
                 System.out.print("\n");
             }
@@ -181,7 +190,6 @@ final class Cube {
     void initializeCube() {
         System.out.println("Enter a size of cube: ");
         cubeSize = keyboard.nextInt();
-
 
         for (int i = 0; i < cubeSize * cubeSize; i++) {
             Front.add("W");
@@ -195,7 +203,6 @@ final class Cube {
         for (int i = 0; i < cubeSize * cubeSize; i++) {
             Bottom.add("B");
         }
-
         for (int i = 0; i < cubeSize * cubeSize; i++) {
             Left.add("R");
         }
@@ -228,9 +235,9 @@ final class Cube {
                 sideToFlip = Right;
                 break;
         }
+
         switch (rotationDirection) {
             case "clockwise":
-
                 bufferSide = new ArrayList<>();
                 for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
                 for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
@@ -259,10 +266,9 @@ final class Cube {
                         Right = bufferSide;
                         break;
                 }
-
                 break;
-            case "counter-clockwise":
 
+            case "counter-clockwise":
                 bufferSide = new ArrayList<>();
                 for (int i = 0; i < cubeSize * cubeSize; i++) bufferSide.add("");
                 for (int c = 0, i = 0, j = 0; c < cubeSize * cubeSize; c++, i = c / cubeSize, j = c % cubeSize) {
@@ -298,7 +304,6 @@ final class Cube {
 
 
     private void rotateSide(String turnDirection, Integer turnNumber) {
-
 
         if (turnDirection.equals("U") || turnDirection.equals("D")) {
 
@@ -354,7 +359,6 @@ final class Cube {
 
         if (turnDirection.equals("L") || turnDirection.equals("R")) {
 
-
             ArrayList<String> buffer = new ArrayList<>();
             for (int i = turnNumber * cubeSize; i <= (turnNumber + 1) * cubeSize - 1; i++) {
                 buffer.add(Front.get(i));
@@ -375,7 +379,6 @@ final class Cube {
                     Left.set(i, buffer.get(j));
                 }
 
-
                 if (turnNumber == 0) this.flipSide("Top", "clockwise");
                 if (turnNumber == cubeSize - 1) this.flipSide("Bottom", "counter-clockwise");
 
@@ -395,7 +398,6 @@ final class Cube {
                 for (int i = turnNumber * cubeSize, j = 0; i <= (turnNumber + 1) * cubeSize - 1; i++, j++) {
                     Right.set(i, buffer.get(j));
                 }
-
 
                 if (turnNumber == 0) this.flipSide("Top", "counter-clockwise");
                 if (turnNumber == cubeSize - 1) this.flipSide("Bottom", "clockwise");
@@ -444,7 +446,6 @@ final class Cube {
                 }
 
                 this.flipSide("Front", "counter-clockwise");
-
             }
 
         }
@@ -503,11 +504,11 @@ final class Cube {
             this.flipSide("Bottom", "clockwise");
 
         }
-
     }
 
     void interactWithCube (ArrayList<String> rotationSequence) {
         for (String rotation : rotationSequence) {
+
             Pattern rowNumberPattern = Pattern.compile("\\d+");
             Matcher rowNumberMatcher = rowNumberPattern.matcher(rotation);
             Integer rowNumber = 0;
@@ -528,7 +529,7 @@ final class Cube {
     }
 
     void shuffleCube() {
-        int numberOfActions = cubeSize * 10 + (int) (Math.random() * (cubeSize) + 5);
+        int numberOfActions = cubeSize * 10;
         String generatedAction;
         ArrayList<String> actionSequence = new ArrayList<>();
         for (int i = 0; i < numberOfActions; i++) {
@@ -568,7 +569,6 @@ final class Cube {
             generatedAction += (int) (Math.random() * (cubeSize));
             actionSequence.add(generatedAction);
         }
-        System.out.println(actionSequence);
         this.interactWithCube(actionSequence);
     }
 }
