@@ -7,13 +7,24 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.print("Use \"Rotate\" to start entering rotation sequence. Use U, D, L, R, CW, CCW + number of row (if needed) to turn specified side of the cube Up, Down, Left, Right, Clockwise and Counter-clockwise.\n" +
-                "Rows are numerated from 0 to \"size of cube - 1\" from left to right and top-down.\n" +
-                "You can also turn whole cube by entering direction of turning: Up, Down, Right, Left.\n" +
-                "To see current state of cube sides enter \"Status\" and choose specific side: \"Front\", \"Back\", \"Top\", \"Bottom\", \"Left\", \"Right\" or whole cube: \"All\"\n\n");
+        System.out.print("-".repeat(196) + "\n" +
+                "| Use \"Rotate\" to start entering rotation sequence. Use U, D, L, R, CW, CCW + " +
+                "number of row (if needed) to turn specified side of the cube " +
+                "Up, Down, Left, Right, Clockwise and Counter-clockwise. |\n" +
+                "| Rows are numerated from 0 to \"size of cube - 1\" from left to right and top-down." +
+                " ".repeat(113) + "|\n" +
+                "| You can also turn whole cube by entering direction of turning: Up, Down, Right, Left." +
+                " ".repeat(108) + "|\n" +
+                "| To see current state of cube sides enter \"Status\" and choose specific side: " +
+                "\"Front\", \"Back\", \"Top\", \"Bottom\", \"Left\", \"Right\" or whole cube: \"All\"" +
+                " ".repeat(47) + "|\n" +
+                "| To shuffle cube use command \"Shuffle\"" +
+                " ".repeat(156) + "|\n" +
+                "-".repeat(196) + "\n\n");
         Scanner keyboard = new Scanner(System.in);
         Cube cubeExample = new Cube();
-        cubeExample.initializeCube();
+        System.out.println("Enter a size of cube: ");
+        cubeExample.initializeCube(keyboard.nextInt());
         String command = "";
 
         while (!command.equals("Stop")) {
@@ -52,21 +63,31 @@ public class Main {
 
 final class Cube {
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        final Cube other = (Cube) obj;
+        if (getClass() != obj.getClass())
+            return false;
+        return this.Front.equals(other.Front) && this.Back.equals(other.Back) && this.Top.equals(other.Top) &&
+                this.Bottom.equals(other.Bottom) && this.Left.equals(other.Left) && this.Right.equals(other.Right);
+    }
+
     private int cubeSize;
 
-    private ArrayList<String> Front = new ArrayList<>();
-    private ArrayList<String> Back = new ArrayList<>();
-    private ArrayList<String> Top = new ArrayList<>();
-    private ArrayList<String> Bottom = new ArrayList<>();
-    private ArrayList<String> Left = new ArrayList<>();
-    private ArrayList<String> Right = new ArrayList<>();
+    ArrayList<String> Front = new ArrayList<>();
+    ArrayList<String> Back = new ArrayList<>();
+    ArrayList<String> Top = new ArrayList<>();
+    ArrayList<String> Bottom = new ArrayList<>();
+    ArrayList<String> Left = new ArrayList<>();
+    ArrayList<String> Right = new ArrayList<>();
 
     String Output_Mode = "Letters";
 
-    private Scanner keyboard = new Scanner(System.in);
 
     void sideStatus(String requestedSide) {
-        ArrayList<String> sideToPrint = new ArrayList<>(Collections.emptyList());
+        ArrayList<String> sideToPrint = new ArrayList<>();
 
         switch (requestedSide) {
             case "Front":
@@ -187,9 +208,8 @@ final class Cube {
 
     }
 
-    void initializeCube() {
-        System.out.println("Enter a size of cube: ");
-        cubeSize = keyboard.nextInt();
+    void initializeCube(int sizeOfCube) {
+        cubeSize = sizeOfCube;
 
         for (int i = 0; i < cubeSize * cubeSize; i++) {
             Front.add("W");
@@ -506,7 +526,7 @@ final class Cube {
         }
     }
 
-    void interactWithCube (ArrayList<String> rotationSequence) {
+    void interactWithCube(ArrayList<String> rotationSequence) {
         for (String rotation : rotationSequence) {
 
             Pattern rowNumberPattern = Pattern.compile("\\d+");
