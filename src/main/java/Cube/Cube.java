@@ -9,21 +9,23 @@ import static java.lang.Math.random;
 
 final class Cube {
 
-    enum outputMode {
+    private enum outputMode {
         Letters,
         Colors,
     }
 
-    void changeOutputMode() {
+    public void changeOutputMode() {
         if (Mode == outputMode.Letters) {
+            System.out.println("Changed: Colors ---> Letters");
             Mode = outputMode.Colors;
         } else {
+            System.out.println("Changed: Letters ---> Colors");
             Mode = outputMode.Letters;
         }
     }
 
 
-    enum Type {
+    private enum Type {
         FrontSide,
         BackSide,
         TopSide,
@@ -33,7 +35,7 @@ final class Cube {
     }
 
 
-    public enum Direction {
+    private enum Direction {
         Left,
         Right,
         Up,
@@ -96,16 +98,16 @@ final class Cube {
         }
     }
 
-    static String setColor(Colors enteredColorName) {
+    public static String setColor(Colors enteredColorName) {
         return enteredColorName.Color;
     }
 
-    static String resetColor() {
+    public static String resetColor() {
         return Colors.reset.Color;
     }
 
 
-    public static class Cell {
+    private static class Cell {
 
         String Lit;
         Colors Color;
@@ -152,7 +154,7 @@ final class Cube {
         }
     }
 
-    static List<Cell> stringToCells(List<String> listOfString) {
+    public static List<Cell> stringToCells(List<String> listOfString) {
         List<Cell> result = new ArrayList<>();
         for (String symbol : listOfString) {
             result.add(new Cell(symbol));
@@ -161,7 +163,7 @@ final class Cube {
     }
 
 
-    final class Side {
+    public final class Side {
 
         List<Cell> sideState;
         Type sideType;
@@ -191,22 +193,22 @@ final class Cube {
             StringBuilder result = new StringBuilder();
             switch (this.sideType) {
                 case FrontSide:
-                    result.append("Front:\n");
+                    result.append("Front:").append(System.lineSeparator());
                     break;
                 case BackSide:
-                    result.append("Back:\n");
+                    result.append("Back:").append(System.lineSeparator());
                     break;
                 case TopSide:
-                    result.append("Top:\n");
+                    result.append("Top:").append(System.lineSeparator());
                     break;
                 case BottomSide:
-                    result.append("Bottom:\n");
+                    result.append("Bottom:").append(System.lineSeparator());
                     break;
                 case LeftSide:
-                    result.append("Left:\n");
+                    result.append("Left:").append(System.lineSeparator());
                     break;
                 case RightSide:
-                    result.append("Right:\n");
+                    result.append("Right:").append(System.lineSeparator());
                     break;
 
             }
@@ -214,7 +216,7 @@ final class Cube {
             for (Cell cell : this.sideState) {
                 if (c == cubeSize) {
                     c = 0;
-                    result.append("\n");
+                    result.append(System.lineSeparator());
                 }
                 if (Mode == outputMode.Letters) {
                     result.append(setColor(cell.Color)).append(cell.Lit).append(resetColor()).append(" ");
@@ -227,7 +229,7 @@ final class Cube {
         }
     }
 
-    List<Side> sideFromString(String enteredSide) {
+    public List<Side> sideFromString(String enteredSide) {
         List<Side> result = new ArrayList<>();
         switch (enteredSide) {
             case "Front":
@@ -270,7 +272,7 @@ final class Cube {
     Side Bottom = new Side(Type.BottomSide);
     Side Left = new Side(Type.LeftSide);
     Side Right = new Side(Type.RightSide);
-    outputMode Mode;
+    private outputMode Mode;
 
     @Override
     public boolean equals(Object obj) {
@@ -288,7 +290,7 @@ final class Cube {
             throw new IllegalArgumentException("");
         }
         cubeSize = enteredSize;
-        Mode = outputMode.Letters;
+        Mode = outputMode.Colors;
         for (int i = 0; i < cubeSize * cubeSize; i++) {
             Front.sideState.add(new Cell("W"));
             Back.sideState.add(new Cell("Y"));
@@ -323,147 +325,103 @@ final class Cube {
     }
 
     private void rotateSide(Direction turnDirection, Integer turnNumber) {
-        List<Cell> buffer;
+        List<Cell> phantomFront = new ArrayList<>();
+        List<Cell> phantomBack = new ArrayList<>();
+        List<Cell> phantomTop = new ArrayList<>();
+        List<Cell> phantomBottom = new ArrayList<>();
+        List<Cell> phantomLeft = new ArrayList<>();
+        List<Cell> phantomRight = new ArrayList<>();
+
+        for (int i = 0; i < cubeSize * cubeSize; i++) {
+            phantomFront.add(new Cell(""));
+            phantomBack.add(new Cell(""));
+            phantomTop.add(new Cell(""));
+            phantomBottom.add(new Cell(""));
+            phantomLeft.add(new Cell(""));
+            phantomRight.add(new Cell(""));
+        }
+
+        Collections.copy(phantomFront, Front.sideState);
+        Collections.copy(phantomBack, Back.sideState);
+        Collections.copy(phantomTop, Top.sideState);
+        Collections.copy(phantomBottom, Bottom.sideState);
+        Collections.copy(phantomLeft, Left.sideState);
+        Collections.copy(phantomRight, Right.sideState);
+
+        int row;
+        int column;
+
         switch (turnDirection) {
             case Up:
-                buffer = new ArrayList<>();
                 for (int i = turnNumber; i <= turnNumber + cubeSize * (cubeSize - 1); i += cubeSize) {
-                    buffer.add(Front.sideState.get(i));
+                    row = i / cubeSize;
+                    column = i % cubeSize;
+                    Front.sideState.set(i, phantomBottom.get(i));
+                    Bottom.sideState.set(i, phantomBack.get(cubeSize * cubeSize - 1 - i));
+                    Back.sideState.set(cubeSize * row + cubeSize - 1 - column, phantomTop.get((cubeSize - 1 - row) * cubeSize + column));
+                    Top.sideState.set(i, phantomFront.get(i));
                 }
-                for (int i = turnNumber; i <= turnNumber + cubeSize * (cubeSize - 1); i += cubeSize) {
-                    Front.sideState.set(i, Bottom.sideState.get(i));
-                }
-                for (int i = turnNumber; i <= turnNumber + cubeSize * (cubeSize - 1); i += cubeSize) {
-                    Bottom.sideState.set(i, Back.sideState.get(cubeSize * (cubeSize - 1 - i / cubeSize) +
-                            cubeSize - 1 - i % cubeSize));
-                }
-                for (int i = turnNumber; i <= turnNumber + cubeSize * (cubeSize - 1); i += cubeSize) {
-                    Back.sideState.set(cubeSize * (i / cubeSize + 1) - i % cubeSize - 1,
-                            Top.sideState.get(cubeSize * (cubeSize - 1 - i / cubeSize) + i % cubeSize));
-                }
-                for (int i = turnNumber, j = 0; i <= turnNumber + cubeSize * (cubeSize - 1); i += cubeSize, j++) {
-                    Top.sideState.set(i, buffer.get(j));
-                }
-
                 if (turnNumber == 0) this.flipSide(Left, Direction.CounterClockwise);
                 if (turnNumber == cubeSize - 1) this.flipSide(Right, Direction.Clockwise);
-
                 break;
 
             case Down:
-                buffer = new ArrayList<>();
                 for (int i = turnNumber; i <= turnNumber + cubeSize * (cubeSize - 1); i += cubeSize) {
-                    buffer.add(Front.sideState.get(i));
+                    row = i / cubeSize;
+                    column = i % cubeSize;
+                    Front.sideState.set(i, phantomTop.get(i));
+                    Bottom.sideState.set(i, phantomFront.get(i));
+                    Back.sideState.set(cubeSize * row + cubeSize - 1 - column, phantomBottom.get((cubeSize - 1 - row) * cubeSize + column));
+                    Top.sideState.set(i, phantomBack.get(cubeSize * cubeSize - 1 - i));
                 }
-                for (int i = turnNumber; i <= turnNumber + cubeSize * (cubeSize - 1); i += cubeSize) {
-                    Front.sideState.set(i, Top.sideState.get(i));
-                }
-                for (int i = turnNumber; i <= turnNumber + cubeSize * (cubeSize - 1); i += cubeSize) {
-                    Top.sideState.set(i, Back.sideState.get(cubeSize * (cubeSize - 1 - i / cubeSize) +
-                            cubeSize - 1 - i % cubeSize));
-                }
-                for (int i = turnNumber; i <= turnNumber + cubeSize * (cubeSize - 1); i += cubeSize) {
-                    Back.sideState.set(cubeSize * (i / cubeSize + 1) - i % cubeSize - 1,
-                            Bottom.sideState.get(cubeSize * (cubeSize - 1 - i / cubeSize) + i % cubeSize));
-                }
-                for (int i = turnNumber, j = 0; i <= turnNumber + cubeSize * (cubeSize - 1); i += cubeSize, j++) {
-                    Bottom.sideState.set(i, buffer.get(j));
-                }
-
                 if (turnNumber == 0) this.flipSide(Left, Direction.Clockwise);
                 if (turnNumber == cubeSize - 1) this.flipSide(Right, Direction.CounterClockwise);
-
                 break;
 
             case Left:
-                buffer = new ArrayList<>();
                 for (int i = turnNumber * cubeSize; i <= (turnNumber + 1) * cubeSize - 1; i++) {
-                    buffer.add(Front.sideState.get(i));
+                    Front.sideState.set(i, phantomRight.get(i));
+                    Left.sideState.set(i, phantomFront.get(i));
+                    Back.sideState.set(i, phantomLeft.get(i));
+                    Right.sideState.set(i, phantomBack.get(i));
                 }
-                for (int i = turnNumber * cubeSize; i <= (turnNumber + 1) * cubeSize - 1; i++) {
-                    Front.sideState.set(i, Right.sideState.get(i));
-                }
-                for (int i = turnNumber * cubeSize; i <= (turnNumber + 1) * cubeSize - 1; i++) {
-                    Right.sideState.set(i, Back.sideState.get(i));
-                }
-                for (int i = turnNumber * cubeSize; i <= (turnNumber + 1) * cubeSize - 1; i++) {
-                    Back.sideState.set(i, Left.sideState.get(i));
-                }
-                for (int i = turnNumber * cubeSize, j = 0; i <= (turnNumber + 1) * cubeSize - 1; i++, j++) {
-                    Left.sideState.set(i, buffer.get(j));
-                }
-
                 if (turnNumber == 0) this.flipSide(Top, Direction.Clockwise);
                 if (turnNumber == cubeSize - 1) this.flipSide(Bottom, Direction.CounterClockwise);
-
                 break;
 
             case Right:
-                buffer = new ArrayList<>();
                 for (int i = turnNumber * cubeSize; i <= (turnNumber + 1) * cubeSize - 1; i++) {
-                    buffer.add(Front.sideState.get(i));
+                    Front.sideState.set(i, phantomLeft.get(i));
+                    Right.sideState.set(i, phantomFront.get(i));
+                    Back.sideState.set(i, phantomRight.get(i));
+                    Left.sideState.set(i, phantomBack.get(i));
                 }
-                for (int i = turnNumber * cubeSize; i <= (turnNumber + 1) * cubeSize - 1; i++) {
-                    Front.sideState.set(i, Left.sideState.get(i));
-                }
-                for (int i = turnNumber * cubeSize; i <= (turnNumber + 1) * cubeSize - 1; i++) {
-                    Left.sideState.set(i, Back.sideState.get(i));
-                }
-                for (int i = turnNumber * cubeSize; i <= (turnNumber + 1) * cubeSize - 1; i++) {
-                    Back.sideState.set(i, Right.sideState.get(i));
-                }
-                for (int i = turnNumber * cubeSize, j = 0; i <= (turnNumber + 1) * cubeSize - 1; i++, j++) {
-                    Right.sideState.set(i, buffer.get(j));
-                }
-
                 if (turnNumber == 0) this.flipSide(Top, Direction.CounterClockwise);
                 if (turnNumber == cubeSize - 1) this.flipSide(Bottom, Direction.Clockwise);
-
                 break;
 
             case Clockwise:
-                buffer = new ArrayList<>();
-                for (int i = (cubeSize - 1) * cubeSize; i <= cubeSize * cubeSize - 1; i++) {
-                    buffer.add(Top.sideState.get(i));
+                for (int i = 0; i < cubeSize; i ++) {
+                    row = i / cubeSize;
+                    column = i % cubeSize;
+                    Bottom.sideState.set(i, phantomRight.get((cubeSize - 1 - column) * cubeSize));
+                    Right.sideState.set(i * cubeSize, phantomTop.get((cubeSize - 1 - row) * cubeSize + column));
+                    Top.sideState.set(cubeSize * cubeSize - 1 - i, phantomLeft.get(column * cubeSize + cubeSize - 1));
+                    Left.sideState.set(column * cubeSize + cubeSize - 1, phantomBottom.get(i));
                 }
-                for (int i = (cubeSize - 1) * cubeSize, j = cubeSize * cubeSize - 1;
-                     i <= cubeSize * cubeSize - 1; i++, j -= cubeSize) {
-                    Top.sideState.set(i, Left.sideState.get(j));
-                }
-                for (int i = cubeSize - 1, j = 0; i <= cubeSize * cubeSize - 1; i += cubeSize, j++) {
-                    Left.sideState.set(i, Bottom.sideState.get(j));
-                }
-                for (int i = 0, j = cubeSize * (cubeSize - 1); i <= cubeSize - 1; i++, j -= cubeSize) {
-                    Bottom.sideState.set(i, Right.sideState.get(j));
-                }
-                for (int i = 0, j = 0; i <= cubeSize * (cubeSize - 1); j++, i += cubeSize) {
-                    Right.sideState.set(i, buffer.get(j));
-                }
-
                 this.flipSide(Front, Direction.Clockwise);
-
                 break;
 
             case CounterClockwise:
-                buffer = new ArrayList<>();
-                for (int i = (cubeSize - 1) * cubeSize; i <= cubeSize * cubeSize - 1; i++) {
-                    buffer.add(Top.sideState.get(i));
+                for (int i = 0; i < cubeSize; i ++) {
+                    row = i / cubeSize;
+                    column = i % cubeSize;
+                    Bottom.sideState.set(i, phantomLeft.get(column * cubeSize + cubeSize - 1));
+                    Right.sideState.set((cubeSize - 1 - column) * cubeSize, phantomBottom.get(i));
+                    Top.sideState.set((cubeSize - 1 - row) * cubeSize + column, phantomRight.get(column * cubeSize));
+                    Left.sideState.set(column * cubeSize + cubeSize - 1, phantomTop.get((cubeSize * cubeSize - 1 - i)));
                 }
-                for (int i = (cubeSize - 1) * cubeSize, j = 0; i <= cubeSize * cubeSize - 1; i++, j += cubeSize) {
-                    Top.sideState.set(i, Right.sideState.get(j));
-                }
-                for (int i = 0, j = cubeSize - 1; i <= cubeSize * (cubeSize - 1); i += cubeSize, j--) {
-                    Right.sideState.set(i, Bottom.sideState.get(j));
-                }
-                for (int i = 0, j = cubeSize - 1; i <= cubeSize - 1; i++, j += cubeSize) {
-                    Bottom.sideState.set(i, Left.sideState.get(j));
-                }
-                for (int i = cubeSize - 1, j = cubeSize - 1; i <= cubeSize * cubeSize - 1; j--, i += cubeSize) {
-                    Left.sideState.set(i, buffer.get(j));
-                }
-
                 this.flipSide(Front, Direction.CounterClockwise);
-
                 break;
         }
     }
@@ -544,7 +502,7 @@ final class Cube {
         }
     }
 
-    void interactWithCube(ArrayList<String> rotationSequence) {
+    public void interactWithCube(List<String> rotationSequence) {
         for (String rotation : rotationSequence) {
             Pattern rowNumberPattern = Pattern.compile("\\d+");
             Matcher rowNumberMatcher = rowNumberPattern.matcher(rotation);
@@ -573,7 +531,7 @@ final class Cube {
         }
     }
 
-    void shuffleCube() {
+    public void shuffleCube() {
         int numberOfActions = cubeSize * 10;
         StringBuilder generatedAction = new StringBuilder();
         ArrayList<String> actionSequence = new ArrayList<>();

@@ -1,5 +1,4 @@
 package Cube;
-
 import java.util.*;
 
 public class Main {
@@ -7,23 +6,24 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.print("-".repeat(196) + "\n" +
+        String helloMessage = "-".repeat(196) + System.lineSeparator() +
                 "| Use \"Rotate\" to start entering rotation sequence. Use U, D, L, R, CW, CCW + " +
                 "number of row (if needed) to turn specified side of the cube " +
-                "Up, Down, Left, Right, Clockwise and Counter-clockwise. |\n" +
+                "Up, Down, Left, Right, Clockwise and Counter-clockwise. |" +
+                System.lineSeparator() +
                 "| Rows are numerated from 0 to \"size of cube - 1\" from left to right and top-down." +
-                " ".repeat(113) + "|\n" +
+                " ".repeat(113) + "|" + System.lineSeparator() +
                 "| You can also turn whole cube by entering direction of turning: Up, Down, Right, Left." +
-                " ".repeat(108) + "|\n" +
+                " ".repeat(108) + "|" + System.lineSeparator() +
                 "| To see current state of cube sides enter \"Status\" and choose specific side: " +
                 "\"Front\", \"Back\", \"Top\", \"Bottom\", \"Left\", \"Right\" or whole cube: \"All\"" +
-                " ".repeat(47) + "|\n" +
+                " ".repeat(47) + "|" + System.lineSeparator() +
                 "| To shuffle cube use command \"Shuffle\"" +
-                " ".repeat(156) + "|\n" +
+                " ".repeat(156) + "|" + System.lineSeparator() +
                 "| To change displaying mode use command \"ChangeOutputMode\"" +
-                " ".repeat(137) + "|\n" +
-                "-".repeat(196) + "\n\n");
-
+                " ".repeat(137) + "|" + System.lineSeparator() +
+                "-".repeat(196) + System.lineSeparator() + System.lineSeparator();
+        System.out.print(helloMessage);
         Scanner keyboard = new Scanner(System.in);
 
 
@@ -60,7 +60,7 @@ public class Main {
                         break;
                     }
                     for (Cube.Side side : Objects.requireNonNull(cubeExample.sideFromString(requestedSide))) {
-                        System.out.println(side.toString() + "\n");
+                        System.out.println(side.toString() + System.lineSeparator());
                     }
                     break;
 
@@ -79,11 +79,6 @@ public class Main {
                     break;
 
                 case "ChangeOutputMode":
-                    if (cubeExample.Mode.equals(Cube.outputMode.Colors)) {
-                        System.out.println("Changed: Colors ---> Letters");
-                    } else {
-                        System.out.println("Changed: Letters ---> Colors");
-                    }
                     cubeExample.changeOutputMode();
                     break;
 
